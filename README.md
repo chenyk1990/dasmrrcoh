@@ -87,6 +87,8 @@ Using the latest version
 
 11. All figures (except for fig1, which is a schematic plot) in the DASmrrcoh paper are in the following directory for a quick look (https://github.com/chenyk1990/dasmrrcoh-dataonly/tree/main/gallery/). 
 
+12. The label fonts are different across different Matlab versions and platforms (Linux, Max). The figures presented in the paper are from Mac-Pro Matlab 2022b. 
+
 -----------
 ## Gallery
 The gallery figures of the DASmrrcoh package can be found at
