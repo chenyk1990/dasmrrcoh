@@ -1,7 +1,7 @@
 % Script to plot Figure 7
 % BY Yangkang Chen
 % Jan, 2023
-% This script takes about 5-10 minutes
+% This script takes about 10 minutes
 %
 % Dependency MATdrr
 % svn co https://github.com/chenyk1990/MATdrr/trunk ./MATdrr 
@@ -9,18 +9,40 @@
 
 clc;clear;close all;
 addpath(genpath('./MATdrr'));
+addpath(genpath('./'));
 
-clc;clear;close all;
-
-
-names=dir('*.mat');
+names=dir('raw/*.mat');
 
 jj=7;
+for ii=7:7
+    name3=names(ii).name;
+    load(strcat(names(ii).folder,'/',names(ii).name));
+    eq1=data;
 
-name3=names(jj).name;
-load(name3);eq3=data;
-dbpmf3=yc_mf(yc_bandpass(data',1/250,0,20)',5,1,1);
-load(sprintf('processed/eq%d.mat',jj));dbpmfmrr3=datatt;
+    if ii==12
+        data(find(isnan(data)))=0;
+    end
+
+    if ii==13
+        data(:,7200:7221)=0;
+        data(:,7150:7271)=das_mf(data(:,7150:7271),40,1,2);
+        data(:,7150:7271)=das_meanf(data(:,7150:7271),40,1,2);
+    end
+
+    eq=data;
+    d_bp=das_bandpass(eq',1/250,0,20)';
+    d_bpmf=das_mf(d_bp,5,1,1);
+    %% MRR
+    n1win=512;n2win=200;n3win=1;
+    r1=0.5;r2=0.5;r3=0.5;
+    d_bpmfmrr=drr3d_win(d_bpmf',0,50,1/250,2,4,0,n1win,n2win,n3win,r1,r2,r3)';
+    d_bpmfmrr=single(d_bpmfmrr);
+    save('processed/eq7.mat','d_bpmfmrr');
+    fprintf('event %d/%d is done\n',ii,length(names));
+    %     close gcf;
+end
+
+
 
 t=[0:14999]*1/250;
 x=1:800;
@@ -37,21 +59,21 @@ Param.dt=1/250.0;
 Param.type=1;
 Param.oper=-1;
 
-c_raw=yc_coh(eq3',Param);
-% c_bp=yc_coh(d_bp,Param);
-c_bpmf=yc_coh(dbpmf3',Param);
-c_bpmfmrr=yc_coh(dbpmfmrr3',Param);
+c_raw=das_coh(eq',Param);
+% c_bp=das_coh(d_bp,Param);
+c_bpmf=das_coh(d_bpmf',Param);
+c_bpmfmrr=das_coh(d_bpmfmrr',Param);
 
 %% picking
 addpath(genpath('~/dasdenoising'));
 nsta=30;nlta=300;
-[ O,R ] = das_picker_stalta(dbpmfmrr3',nsta, nlta);
-[ O2,R ] = das_picker_stalta(dbpmf3',nsta, nlta);
+[ O,R ] = das_picker_stalta(d_bpmfmrr',nsta, nlta);
+[ O2,R ] = das_picker_stalta(d_bpmf',nsta, nlta);
 
 
 figure('units','normalized','Position',[0.2 0.4 0.8, 1],'color','w');
 ax=subplot(3,2,1);
-yc_imagesc(eq3,95,1,t,x);colormap(ax,seis);xlim([0,60]);
+das_imagesc(eq,95,1,t,x);colormap(ax,seis);xlim([0,60]);
 title(name3,'Interpreter', 'none','Fontsize',14,'fontweight','bold');
 % xlabel('Time (s)','Fontsize',14,'fontweight','bold');
 ylabel('Channel','Fontsize',14,'fontweight','bold');
@@ -59,7 +81,7 @@ set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
 text(-5,-100,'a)','color','k','Fontsize',18,'fontweight','bold','HorizontalAlignment','center');
 
 ax=subplot(3,2,3);
-yc_imagesc(dbpmf3,95,1,t,x);colormap(ax,seis);title('BP+MF');xlim([0,60]);
+das_imagesc(d_bpmf,95,1,t,x);colormap(ax,seis);title('BP+MF');xlim([0,60]);
 title('BP+MF','Fontsize',14,'fontweight','bold');
 % xlabel('Time (s)','Fontsize',14,'fontweight','bold');
 ylabel('Channel','Fontsize',14,'fontweight','bold');
@@ -68,7 +90,7 @@ text(-5,-100,'c)','color','k','Fontsize',18,'fontweight','bold','HorizontalAlign
 hold on;plot(O2/250,x,'o','color','g','linewidth',2);legend('STA/LTA','Location','Best');
 
 ax=subplot(3,2,5);
-yc_imagesc(dbpmfmrr3,95,1,t,x);colormap(ax,seis);title('BP+MF');xlim([0,60]);
+das_imagesc(d_bpmfmrr,95,1,t,x);colormap(ax,seis);title('BP+MF');xlim([0,60]);
 title('BP+MF+MRR','Fontsize',14,'fontweight','bold');
 xlabel('Time (s)','Fontsize',14,'fontweight','bold');
 ylabel('Channel','Fontsize',14,'fontweight','bold');
@@ -110,16 +132,6 @@ text(t(3672)+4,v(40)-0.0002,'Cmax','color','r','Fontsize',18,'fontweight','bold'
 print(gcf,'-depsc','-r300','fig7.eps');
 
 
-
-%% find Cmax
-
-% yc_attr(abs(c_bpmfmrr(1:5000,:)));
-%3672
-%40
-% tmp=yc_meanf(yc_meanf(abs(c_bpmfmrr(1:5000,:)),5,1,1),5,1,2);
-% yc_attr(tmp)
-
-%3672,37
 
 
 

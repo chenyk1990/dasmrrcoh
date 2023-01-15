@@ -1,7 +1,7 @@
 % Script to plot Figure 3
 % BY Yangkang Chen
 % Jan, 2023
-% This script takes about 5-10 minutes
+% This script takes about 10 minutes
 %
 % Dependency MATdrr
 % svn co https://github.com/chenyk1990/MATdrr/trunk ./MATdrr 
@@ -9,7 +9,7 @@
 
 clc;clear;close all;
 addpath(genpath('./MATdrr'));
-
+addpath(genpath('./'));
 
 if ~isdir('fig')
     mkdir('fig');
@@ -19,82 +19,51 @@ if ~isdir('processed')
     mkdir('processed');
 end
 
-names=dir('*.mat');
-
-for ii=2:2
-    name=names(ii).name;
-    load(name);
-    if ii==2
+names=dir('raw/*.mat');
+ieq=2;
+for ii=ieq:ieq
+    load(strcat(names(ii).folder,'/',names(ii).name));
+    if ii==ieq
         [n1,n2]=size(data);
         t=[0:n2-1]*(1/250);
         x=1:n1;
     end
-    
-    figure('units','normalized','Position',[0.2 0.4 0.8, 1],'color','w');
-    subplot(3,2,1);
-    yc_imagesc(data,95,1,t,x);title(name,'Interpreter', 'none');
-    
-    
+
     if ii==12
         data(find(isnan(data)))=0;
     end
-    eq=data';
-    data=yc_bandpass(data',1/250,0,20)';
-    datat=yc_mf(data,5,1,1);
-    %% LDRR
+    eq=data;
+    d_bp=das_bandpass(eq',1/250,0,20)';
+    d_bpmf=das_mf(d_bp,5,1,1);
+    %% MRR
     n1win=1024;n2win=800;n3win=1;
     n1win=512;n2win=200;n3win=1;
     r1=0.5;r2=0.5;r3=0.5;
-    param.N=3;
-%     datatt=drr3d_win(datat',0,50,1/250,2,4,0,n1win,n2win,n3win,r1,r2,r3)';
-    
-    load(sprintf('processed/eq%d.mat',ii));
+    d_bpmfmrr=drr3d_win(d_bpmf',0,50,1/250,2,4,0,n1win,n2win,n3win,r1,r2,r3)';
 
-    subplot(3,2,2);
-    yc_imagesc(data,95,1,t,x);title('BP');
-    
-    subplot(3,2,3);
-    yc_imagesc(datat,95,1,t,x);title('MF (5)');%xlim([7.5,8.5]);
-    
-    subplot(3,2,5);
-    yc_imagesc(datat,95,1,t,x);title('MF (5)');xlim([0,30]);ylim([0,200]);
-    
-    subplot(3,2,4);
-    %     data=fxydmssa(data',0,50,1/250,4,3,0)'; %fail
-    %     data=yc_mf(data,15,1,1);%fail
-    %     data=yc_kl(data',10)';  %fail
-    yc_imagesc(datatt,95,1,t,x);title('LDRR');
-    %     yc_imagesc(data,95,1,t,x);xlim([0,20]);
-    
-    subplot(3,2,6);
-    yc_imagesc(datatt,95,1,t,x);title('LDRR');xlim([0,30]);ylim([0,200]);
-    
-%     figname=sprintf('fig/new_eq%d.png',ii);
-%     print(gcf,'-dpng','-r300',figname);
-%     save(sprintf('processed/eq%d.mat',ii),'datatt');
+    save(sprintf('processed/eq%d.mat',ii),'d_bp','d_bpmf','d_bpmfmrr');
 
-
-    %     data=[];
     fprintf('event %d/%d is done\n',ii,length(names));
     %     close gcf;
 end
 
-d_bp=data';
-d_bpsomf=datat';
-d_bpsomffk=datatt';
+eq=eq';
+d_bp=d_bp';
+d_bpmf=d_bpmf';
+d_bpmfmrr=d_bpmfmrr';
 
 
 %ii=3: FORGE_78-32_iDASv3-P11_UTC190423213209.sgy, 1484, 3.394402, 0.910045
 
 % t=[0:n1-1]*0.0005;
-[n1,n2]=size(d_bpsomffk);
+[n1,n2]=size(d_bpmfmrr);
 x=1:n2;
 ngap=50;
 
 eq2=[eq,zeros(n1,ngap),zeros(size(eq))];
 d_bp2=[d_bp,zeros(n1,ngap),eq-d_bp];
-d_bpsomf2=[d_bpsomf,zeros(n1,ngap),eq-d_bpsomf];
-d_bpsomffk2=[d_bpsomffk,zeros(n1,ngap),eq-d_bpsomffk];
+d_bpmf2=[d_bpmf,zeros(n1,ngap),eq-d_bpmf];
+d_bpmfmrr2=[d_bpmfmrr,zeros(n1,ngap),eq-d_bpmfmrr];
 x=1:ngap+n2*2;
 
 %% begin plotting
@@ -126,14 +95,14 @@ for ir=1:3
 %% first column
 ix=traces(3*(ir-1)+1);
 a1=axes('Parent',gcf,'Position',[x0,y0+dy+dh*(nr-ir),dw,dh1]);
-plot(t,d_bpsomffk(:,ix),'k','linewidth',2); xlim([5,30]);ylim(ylm);
+plot(t,d_bpmfmrr(:,ix),'k','linewidth',2); xlim([5,30]);ylim(ylm);
 if ir<=2
     set(gca,'xticklabel',[],'linewidth',2,'fontweight','bold');
 else
     xlabel('Time (s)');set(gca,'linewidth',2,'fontweight','bold');
 end
 a1=axes('Parent',gcf,'Position',[x0,y0+2*dy+dh*(nr-ir),dw,dh1]);
-plot(t,d_bpsomf(:,ix),'k','linewidth',2); set(gca,'xticklabel',[],'linewidth',2,'fontweight','bold');xlim([5,30]);ylim(ylm);
+plot(t,d_bpmf(:,ix),'k','linewidth',2); set(gca,'xticklabel',[],'linewidth',2,'fontweight','bold');xlim([5,30]);ylim(ylm);
 a1=axes('Parent',gcf,'Position',[x0,y0+3*dy+dh*(nr-ir),dw,dh1]);
 plot(t,d_bp(:,ix),'k','linewidth',2); set(gca,'xticklabel',[],'linewidth',2,'fontweight','bold');xlim([5,30]);ylim(ylm);
 a1=axes('Parent',gcf,'Position',[x0,y0+4*dy+dh*(nr-ir),dw,dh1]);
@@ -157,14 +126,14 @@ text(-0.1,0,labels(il),'color','k','Fontsize',15,'fontweight','bold');axis off;
 %% Second column
 ix=traces(3*(ir-1)+2);
 a1=axes('Parent',gcf,'Position',[x0+0.3,y0+dy+dh*(nr-ir),dw,dh1]);
-plot(t,d_bpsomffk(:,ix),'k','linewidth',2); xlim([5,30]);ylim(ylm2);
+plot(t,d_bpmfmrr(:,ix),'k','linewidth',2); xlim([5,30]);ylim(ylm2);
 if ir<=2
     set(gca,'xticklabel',[],'linewidth',2,'fontweight','bold');
 else
     xlabel('Time (s)');set(gca,'linewidth',2,'fontweight','bold');
 end
 a1=axes('Parent',gcf,'Position',[x0+0.3,y0+2*dy+dh*(nr-ir),dw,dh1]);
-plot(t,d_bpsomf(:,ix),'k','linewidth',2); set(gca,'xticklabel',[],'linewidth',2,'fontweight','bold');xlim([5,30]);ylim(ylm2);
+plot(t,d_bpmf(:,ix),'k','linewidth',2); set(gca,'xticklabel',[],'linewidth',2,'fontweight','bold');xlim([5,30]);ylim(ylm2);
 a1=axes('Parent',gcf,'Position',[x0+0.3,y0+3*dy+dh*(nr-ir),dw,dh1]);
 plot(t,d_bp(:,ix),'k','linewidth',2); set(gca,'xticklabel',[],'linewidth',2,'fontweight','bold');xlim([5,30]);ylim(ylm2);
 a1=axes('Parent',gcf,'Position',[x0+0.3,y0+4*dy+dh*(nr-ir),dw,dh1]);
@@ -188,14 +157,14 @@ text(-0.1,0,labels(il),'color','k','Fontsize',15,'fontweight','bold');axis off;
 %% Third column
 ix=traces(3*(ir-1)+3);
 a1=axes('Parent',gcf,'Position',[x0+0.6,y0+dy+dh*(nr-ir),dw,dh1]);
-plot(t,d_bpsomffk(:,ix),'k','linewidth',2); xlim([5,30]);ylim(ylm3);
+plot(t,d_bpmfmrr(:,ix),'k','linewidth',2); xlim([5,30]);ylim(ylm3);
 if ir<=2
     set(gca,'xticklabel',[],'linewidth',2,'fontweight','bold');
 else
     xlabel('Time (s)');set(gca,'linewidth',2,'fontweight','bold');
 end
 a1=axes('Parent',gcf,'Position',[x0+0.6,y0+2*dy+dh*(nr-ir),dw,dh1]);
-plot(t,d_bpsomf(:,ix),'k','linewidth',2); set(gca,'xticklabel',[],'linewidth',2,'fontweight','bold');xlim([5,30]);ylim(ylm3);
+plot(t,d_bpmf(:,ix),'k','linewidth',2); set(gca,'xticklabel',[],'linewidth',2,'fontweight','bold');xlim([5,30]);ylim(ylm3);
 a1=axes('Parent',gcf,'Position',[x0+0.6,y0+3*dy+dh*(nr-ir),dw,dh1]);
 plot(t,d_bp(:,ix),'k','linewidth',2); set(gca,'xticklabel',[],'linewidth',2,'fontweight','bold');xlim([5,30]);ylim(ylm3);
 a1=axes('Parent',gcf,'Position',[x0+0.6,y0+4*dy+dh*(nr-ir),dw,dh1]);

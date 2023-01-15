@@ -1,7 +1,7 @@
 % Script to plot Figure 6
 % BY Yangkang Chen
 % Jan, 2023
-% This script takes about 5-10 minutes
+% This script takes about 6 hours?
 %
 % Dependency MATdrr
 % svn co https://github.com/chenyk1990/MATdrr/trunk ./MATdrr 
@@ -9,16 +9,9 @@
 
 clc;clear;close all;
 addpath(genpath('./MATdrr'));
+addpath(genpath('./'));
 
-
-names=dir('*.mat');
-
-jj=7;
-
-name3=names(jj).name;
-load(name3);eq3=data;
-dbpmf3=yc_mf(yc_bandpass(data',1/250,0,20)',5,1,1);
-load(sprintf('processed/eq%d.mat',jj));dbpmfmrr3=datatt;
+names=dir('raw/*.mat');
 
 t=[0:14999]*1/250;
 x=1:800;
@@ -44,13 +37,13 @@ c_bpmfmrrs=zeros(31,1);
 
 for ii =1:31
     name=names(ii).name;
-    load(name);
+    load(strcat(names(ii).folder,'/',names(ii).name));
     eq=data;
 
     if ii==13
         eq(:,7200:7221)=0;
-        eq(:,7150:7271)=yc_mf(eq(:,7150:7271),40,1,2);
-        eq(:,7150:7271)=yc_meanf(eq(:,7150:7271),40,1,2);
+        eq(:,7150:7271)=das_mf(eq(:,7150:7271),40,1,2);
+        eq(:,7150:7271)=das_meanf(eq(:,7150:7271),40,1,2);
     end
 
     if ii==13
@@ -61,26 +54,30 @@ for ii =1:31
 
     %     figure('units','normalized','Position',[0.2 0.4 0.8, 1],'color','w');
     %     subplot(3,2,1);
-    %     yc_imagesc(eq,95,1,t,x);title(name,'Interpreter', 'none');
+    %     das_imagesc(eq,95,1,t,x);title(name,'Interpreter', 'none');
 
     if ii==12
         eq(find(isnan(data)))=0;
     end
 
-%     data=yc_bandpass(eq',1/250,0,20)';
-%     datat=yc_mf(data,5,1,1);
-    load(sprintf('processed/eq%d.mat',ii));
-    load(sprintf('processed/bp%d.mat',ii));
-    load(sprintf('processed/mf%d.mat',ii));
-%     save(sprintf('processed/bp%d.mat',ii),'data')
-%     save(sprintf('processed/mf%d.mat',ii),'datat')
+    d_bp=das_bandpass(eq',1/250,0,20)';
+    d_bpmf=das_mf(d_bp,5,1,1);
 
-    %     dbpmfmrr3=datatt;
+    %% MRR
+    n1win=512;n2win=200;n3win=1;
+    r1=0.5;r2=0.5;r3=0.5;
+    d_bpmfmrr=drr3d_win(d_bpmf',0,50,1/250,2,4,0,n1win,n2win,n3win,r1,r2,r3)';
+    d_bpmfmrr=single(d_bpmfmrr);
+    save(sprintf('processed/eq%d.mat',ii),'d_bpmfmrr');
+%     load(sprintf('processed/eq%d.mat',ii));
+%     load(sprintf('processed/bp%d.mat',ii));
+%     load(sprintf('processed/mf%d.mat',ii));
+%     d_bpmfmrr=datatt;
 
-    c_raw=yc_coh(eq',Param);
-    c_bp=yc_coh(data',Param);
-    c_bpmf=yc_coh(datat',Param);
-    c_bpmfmrr=yc_coh(datatt',Param);
+    c_raw=das_coh(eq',Param);
+    c_bp=das_coh(d_bp',Param);
+    c_bpmf=das_coh(d_bpmf',Param);
+    c_bpmfmrr=das_coh(d_bpmfmrr',Param);
 
     c_raws(ii)=max(abs(c_raw(:)));
     c_bps(ii)=max(abs(c_bp(:)));
@@ -90,7 +87,8 @@ for ii =1:31
     fprintf('II=%d is done\n',ii);
 end
 
-load allcmax.mat
+save allcmax.mat c_raws c_bps c_bpmfs c_bpmfmrrs
+% load allcmax.mat
 
 figure('units','normalized','Position',[0.2 0.4 0.6, 0.75],'color','w');
 plot([1:31],c_raws,'-ok','linewidth',2);hold on;
@@ -115,40 +113,39 @@ end
 
 ap1=[5,0.15];
 ap2=[5,c_bpmfs(5)];
-fp1=yc_ap2fp(ap1);
-fp2=yc_ap2fp(ap2);
+fp1=das_ap2fp(ap1);
+fp2=das_ap2fp(ap2);
 annotation('textarrow',[fp1(1),fp2(1)],[fp1(2),fp2(2)],'String','Missed in Lellouch et al (2019)','linewidth',2,'Fontsize',12,'fontweight','bold','color','b','HorizontalAlignment','center');
 ap1=[5,0.15];
 ap2=[6,c_bpmfs(6)];
-fp1=yc_ap2fp(ap1);
-fp2=yc_ap2fp(ap2);
+fp1=das_ap2fp(ap1);
+fp2=das_ap2fp(ap2);
 annotation('arrow',[fp1(1),fp2(1)],[fp1(2),fp2(2)],'linewidth',2,'color','b');
 ap1=[5,0.15];
 ap2=[7,c_bpmfs(7)];
-fp1=yc_ap2fp(ap1);
-fp2=yc_ap2fp(ap2);
+fp1=das_ap2fp(ap1);
+fp2=das_ap2fp(ap2);
 annotation('arrow',[fp1(1),fp2(1)],[fp1(2),fp2(2)],'linewidth',2,'color','b');
 
 
 ap1=[22,0.18];
 ap2=[21,c_bpmfs(21)];
-fp1=yc_ap2fp(ap1);
-fp2=yc_ap2fp(ap2);
+fp1=das_ap2fp(ap1);
+fp2=das_ap2fp(ap2);
 annotation('textarrow',[fp1(1),fp2(1)],[fp1(2),fp2(2)],'String',{'Missed in Lellouch','et al (2019)'},'linewidth',2,'Fontsize',12,'fontweight','bold','color','b','HorizontalAlignment','center');
 ap1=[22,0.18];
 ap2=[22,c_bpmfs(22)];
-fp1=yc_ap2fp(ap1);
-fp2=yc_ap2fp(ap2);
+fp1=das_ap2fp(ap1);
+fp2=das_ap2fp(ap2);
 annotation('arrow',[fp1(1),fp2(1)],[fp1(2),fp2(2)],'linewidth',2,'color','b');
 ap1=[22,0.18];
 ap2=[25,c_bpmfs(25)];
-fp1=yc_ap2fp(ap1);
-fp2=yc_ap2fp(ap2);
+fp1=das_ap2fp(ap1);
+fp2=das_ap2fp(ap2);
 annotation('arrow',[fp1(1),fp2(1)],[fp1(2),fp2(2)],'linewidth',2,'color','b');
 
 print(gcf,'-depsc','-r300','fig6.eps');
 
-% save allcmax.mat c_raws c_bps c_bpmfs c_bpmfmrrs
 
 
 

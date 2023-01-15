@@ -1,7 +1,7 @@
 % Script to plot Figure 8
 % BY Yangkang Chen
 % Jan, 2023
-% This script takes about 5-10 minutes
+% This script takes about 4 hours?
 %
 % Dependency MATdrr
 % svn co https://github.com/chenyk1990/MATdrr/trunk ./MATdrr 
@@ -9,7 +9,7 @@
 
 clc;clear;close all;
 addpath(genpath('./MATdrr'));
-
+addpath(genpath('./'));
 
 if ~isdir('fig')
     mkdir('fig');
@@ -19,25 +19,25 @@ if ~isdir('processed')
     mkdir('processed');
 end
 
-names=dir('*.mat');
+names=dir('raw/*.mat');
 
 ii=9;
 ii=2;
 name=names(ii).name;
-load(name);
+load(strcat(names(ii).folder,'/',names(ii).name));
 
 randn('state',202425);
 noise=randn(800,14999);%% pure noise 
-ndata=yc_bandpass(noise',1/250,0,20)';%% pure noise 
-ndatat=yc_mf(ndata,5,1,1);%% pure noise 
+ndata=das_bandpass(noise',1/250,0,20)';%% pure noise 
+ndatat=das_mf(ndata,5,1,1);%% pure noise 
 
 
 if ii==12
     data(find(isnan(data)))=0;
 end
 eq=data;
-data=yc_bandpass(eq',1/250,0,20)';
-datat=yc_mf(data,5,1,1); 
+data=das_bandpass(eq',1/250,0,20)';
+datat=das_mf(data,5,1,1); 
 
 nt=14999;
 nx=800;
@@ -68,36 +68,36 @@ for iw=1:nw
     % load(sprintf('processed/eq%d.mat',ii));
     %     figname=sprintf('fig/new_eq%d.png',ii);
     %     print(gcf,'-dpng','-r300',figname);
-    save(sprintf('processed/eq2-mrr-win-%d-%d.mat',WinS,n1win),'datatt');
-    save(sprintf('processed/noise-mrr-win-%d-%d.mat',WinS,n1win),'ndatatt');
+%     save(sprintf('processed/eq2-mrr-win-%d-%d.mat',WinS,n1win),'datatt');
+%     save(sprintf('processed/noise-mrr-win-%d-%d.mat',WinS,n1win),'ndatatt');
 
-    tmp=abs(yc_coh(datatt',Param));
+    tmp=abs(das_coh(datatt',Param));
     cs(iw,iw2)=max(tmp(:));
-    tmp=abs(yc_coh(ndatatt',Param));
+    tmp=abs(das_coh(ndatatt',Param));
     ncs(iw,iw2)=max(tmp(:));
     fprintf('%d/%d n1win=%d,WinS=%d cs(%d,%d)=%g ncs(%d,%d)=%g  is done\n',iw,nw,n1win,WinS,iw,iw2,cs(iw,iw2),iw,iw2,ncs(iw,iw2));
 end
 end
 save eq2_winsize.mat cs ncs
-figure;
-plot(nws,cs(:,1));hold on;
-plot(nws,cs(:,2));
-plot(nws,cs(:,3));
-plot(nws,cs(:,4));
-legend('WinS=200','WinS=400','WinS=600','WinS=800','location','best');
-print(gcf,'-depsc','-r300','win_eq2.eps');
+% figure;
+% plot(nws,cs(:,1));hold on;
+% plot(nws,cs(:,2));
+% plot(nws,cs(:,3));
+% plot(nws,cs(:,4));
+% legend('WinS=200','WinS=400','WinS=600','WinS=800','location','best');
+% print(gcf,'-depsc','-r300','win_eq2.eps');
 
 %%
 ii=25;
 name=names(ii).name;
-load(name);
+load(strcat(names(ii).folder,'/',names(ii).name));
 
 if ii==12
     data(find(isnan(data)))=0;
 end
 eq=data;
-data=yc_bandpass(eq',1/250,0,20)';
-datat=yc_mf(data,5,1,1); 
+data=das_bandpass(eq',1/250,0,20)';
+datat=das_mf(data,5,1,1); 
 
 nt=14999;
 nx=800;
@@ -127,12 +127,12 @@ for iw=1:nw
     %     print(gcf,'-dpng','-r300',figname);
     save(sprintf('processed/eq25-mrr-win-%d-%d.mat',WinS,n1win),'datatt');
 
-    tmp=abs(yc_coh(datatt',Param));
+    tmp=abs(das_coh(datatt',Param));
     cs(iw,iw2)=max(tmp(:));
     fprintf('%d/%d n1win=%d,WinS=%d cs(%d,%d)=%g ncs(%d,%d)=%g  is done\n',iw,nw,n1win,WinS,iw,iw2,cs(iw,iw2),iw,iw2,ncs(iw,iw2));
 end
 end
-% save eq25_winsize.mat cs
+save eq25_winsize.mat cs
 
 
 %% run from this line
@@ -164,14 +164,14 @@ plot(nws,ncs(:,4),'-s','linewidth',2,'MarkerSize',8);
 %% legend
 ap1=[1900,0.65];
 ap2=[2560,0.85];
-fp1=yc_ap2fp(ap1);
-fp2=yc_ap2fp(ap2);
+fp1=das_ap2fp(ap1);
+fp2=das_ap2fp(ap2);
 legend('WinS=200','WinS=400','WinS=600','WinS=800','WinSN=200','WinSN=400','WinSN=600','WinSN=800','Position',[fp1(1),fp1(2),fp2(1)-fp1(1),fp2(2)-fp1(2)],'NumColumns',1);
 %% framebox
 ap1=[190,0.22];
 ap2=[2620,0.58];
-fp1=yc_ap2fp(ap1);
-fp2=yc_ap2fp(ap2);
+fp1=das_ap2fp(ap1);
+fp2=das_ap2fp(ap2);
 annotation(gcf,'rectangle',[fp1(1) fp1(2) fp2(1)-fp1(1) fp2(2)-fp1(2)],'LineStyle','--','LineWidth',2,'color','m');
 text(190,0.60,'Calculated from filtered noise','color','m','Fontsize',14,'fontweight','bold');
 text(-150,1.02,'a)','color','k','Fontsize',28,'fontweight','bold');
@@ -204,14 +204,14 @@ plot(nws,ncs(:,4),'-s','linewidth',2,'MarkerSize',8);
 %% legend
 ap1=[1900,0.48];
 ap2=[2560,0.68];
-fp1=yc_ap2fp(ap1);
-fp2=yc_ap2fp(ap2);
+fp1=das_ap2fp(ap1);
+fp2=das_ap2fp(ap2);
 legend('WinS=200','WinS=400','WinS=600','WinS=800','WinSN=200','WinSN=400','WinSN=600','WinSN=800','Position',[fp1(1),fp1(2),fp2(1)-fp1(1),fp2(2)-fp1(2)],'NumColumns',1);
 %% framebox
 ap1=[190,0.22];
 ap2=[2620,0.58];
-fp1=yc_ap2fp(ap1);
-fp2=yc_ap2fp(ap2);
+fp1=das_ap2fp(ap1);
+fp2=das_ap2fp(ap2);
 annotation(gcf,'rectangle',[fp1(1) fp1(2) fp2(1)-fp1(1) fp2(2)-fp1(2)],'LineStyle','--','LineWidth',2,'color','m');
 text(190,0.60,'Calculated from filtered noise','color','m','Fontsize',14,'fontweight','bold');
 text(-150,1.02,'b)','color','k','Fontsize',28,'fontweight','bold');
