@@ -83,7 +83,7 @@ for ii =2:31
     set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
     text(-5,-100,'c)','color','k','Fontsize',18,'fontweight','bold','HorizontalAlignment','center');
     x1=0;x2=30;y1=0;y2=400;
-    yc_framebox(x1,x2,y1,y2,'r',2)
+    das_framebox(x1,x2,y1,y2,'r',2)
 
     ax4=subplot(3,2,4);
     das_imagesc(d_bpmfmrr,95,1,t,x);colormap(ax4,seis);title('BP+MF+MRR');
@@ -92,7 +92,7 @@ for ii =2:31
     % ylabel('Channel','Fontsize',14,'fontweight','bold');
     set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
     text(-5,-100,'d)','color','k','Fontsize',18,'fontweight','bold','HorizontalAlignment','center');
-    yc_framebox(x1,x2,y1,y2,'r',2)
+    das_framebox(x1,x2,y1,y2,'r',2)
 
     ax5=subplot(3,2,5);
     das_imagesc(d_bpmf,95,1,t,x);colormap(ax4,seis);xlim([x1,x2]);ylim([y1,y2]);

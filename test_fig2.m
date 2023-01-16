@@ -24,6 +24,7 @@ names=dir('raw/*.mat');
 ieq=2;
 for ii=ieq:ieq
     load(strcat(names(ii).folder,'/',names(ii).name));
+    name=names(ii).name;
     if ii==ieq
         [n1,n2]=size(data);
         t=[0:n2-1]*(1/250);
