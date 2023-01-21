@@ -6,7 +6,7 @@
 **DASmrrcoh** package is used to store the reproducible and open-access scripts for denoising DAS data using MRR and enhancing earthquake detection by COHerency measure.
 
 ## Reference
-If you find this package useful, please do not SAFODt to cite the following paper.
+If you find this package useful, please do not forget to cite the following paper.
 
     Chen, Y., Savvaidis, A., Chen, Y., Saad, O.M., and Fomel, S., (2023). Enhancing earthquake detection from distributed acoustic sensing data by coherency measure and moving-rank-reduction filtering, under review.
     
