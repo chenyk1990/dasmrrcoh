@@ -135,24 +135,24 @@ cmrr3=das_coh(dmrr3',Param);
 
 figure('units','normalized','Position',[0.2 0.4 0.8, 1],'color','w');
 ax1=subplot(3,4,1);
-yc_imagesc(eq1,95,1,t,x);colormap(ax1,seis);
+das_imagesc(eq1,95,1,t,x);colormap(ax1,seis);
 title(name1,'Interpreter', 'none','Fontsize',10,'fontweight','bold');
 % xlabel('Time (s)','Fontsize',14,'fontweight','bold');
 ylabel('Channel','Fontsize',14,'fontweight','bold');
 set(gca,'Linewidth',2,'Fontsize',10,'Fontweight','bold');
 text(-10,-120,'a)','color','k','Fontsize',18,'fontweight','bold','HorizontalAlignment','center');
-yc_framebox(7,11,2,799,'r',2);
+das_framebox(7,11,2,799,'r',2);
 
 ax2=subplot(3,4,2);
-yc_imagesc(dmrr1,95,1,t,x);colormap(ax2,seis);
+das_imagesc(dmrr1,95,1,t,x);colormap(ax2,seis);
 title(strcat('Denoised (Cmax:'," ",num2str(max(abs(craw1(:)))),'->',num2str(max(abs(cmrr1(:)))),')'),'Fontsize',6,'fontweight','bold');
 % xlabel('Time (s)','Fontsize',14,'fontweight','bold');
 % ylabel('Channel','Fontsize',14,'fontweight','bold');
 set(gca,'Linewidth',2,'Fontsize',10,'Fontweight','bold');
-yc_framebox(7,11,2,799,'r',2);
+das_framebox(7,11,2,799,'r',2);
 
 ax1=subplot(3,4,3);
-yc_imagesc(eq1,98,1,t,x);colormap(ax1,seis);
+das_imagesc(eq1,98,1,t,x);colormap(ax1,seis);
 title('Raw','Interpreter', 'none','Fontsize',10,'fontweight','bold');
 % xlabel('Time (s)','Fontsize',14,'fontweight','bold');
 % ylabel('Channel','Fontsize',14,'fontweight','bold');
@@ -161,7 +161,7 @@ set(gca,'Linewidth',2,'Fontsize',10,'Fontweight','bold');
 xlim([7,11]);
 
 ax2=subplot(3,4,4);
-yc_imagesc(dmrr1,98,1,t,x);colormap(ax2,seis);
+das_imagesc(dmrr1,98,1,t,x);colormap(ax2,seis);
 title('Denoised','Fontsize',14,'fontweight','bold');
 % xlabel('Time (s)','Fontsize',14,'fontweight','bold');
 % ylabel('Channel','Fontsize',14,'fontweight','bold');
@@ -171,55 +171,55 @@ xlim([7,11]);
 
 
 ax1=subplot(3,4,5);
-yc_imagesc(eq2,95,1,t,x);colormap(ax1,seis);
+das_imagesc(eq2,95,1,t,x);colormap(ax1,seis);
 title(name2,'Interpreter', 'none','Fontsize',14,'fontweight','bold');
 % xlabel('Time (s)','Fontsize',14,'fontweight','bold');
 ylabel('Channel','Fontsize',14,'fontweight','bold');
 set(gca,'Linewidth',2,'Fontsize',10,'Fontweight','bold');
 text(-10,-120,'b)','color','k','Fontsize',18,'fontweight','bold','HorizontalAlignment','center');
-yc_framebox(10,13,2,799,'r',2);
+das_framebox(10,13,2,799,'r',2);
 
 ax2=subplot(3,4,6);
-yc_imagesc(dmrr2,95,1,t,x);colormap(ax2,seis);
+das_imagesc(dmrr2,95,1,t,x);colormap(ax2,seis);
 title(strcat('Denoised (Cmax:'," ",num2str(max(abs(craw2(:)))),'->',num2str(max(abs(cmrr2(:)))),')'),'Fontsize',14,'fontweight','bold');
 % xlabel('Time (s)','Fontsize',14,'fontweight','bold');
 % ylabel('Channel','Fontsize',14,'fontweight','bold');
 set(gca,'Linewidth',2,'Fontsize',10,'Fontweight','bold');
-yc_framebox(10,13,2,799,'r',2);
+das_framebox(10,13,2,799,'r',2);
 
 ax1=subplot(3,4,7);
-yc_imagesc(eq2,99,1,t,x);colormap(ax1,seis);
+das_imagesc(eq2,99,1,t,x);colormap(ax1,seis);
 title('Raw','Interpreter', 'none','Fontsize',10,'fontweight','bold');
 set(gca,'Linewidth',2,'Fontsize',10,'Fontweight','bold');
 xlim([10,13]);
 
 ax2=subplot(3,4,8);
-yc_imagesc(dmrr2,99,1,t,x);colormap(ax2,seis);
+das_imagesc(dmrr2,99,1,t,x);colormap(ax2,seis);
 title('Denoised','Fontsize',14,'fontweight','bold');
 set(gca,'Linewidth',2,'Fontsize',10,'Fontweight','bold');
 xlim([10,13]);
 
 
 ax1=subplot(3,4,9);
-yc_imagesc(eq3,95,1,t,x);colormap(ax1,seis);
+das_imagesc(eq3,95,1,t,x);colormap(ax1,seis);
 title(name3,'Interpreter', 'none','Fontsize',14,'fontweight','bold');
 xlabel('Time (s)','Fontsize',14,'fontweight','bold');
 ylabel('Channel','Fontsize',14,'fontweight','bold');
 set(gca,'Linewidth',2,'Fontsize',10,'Fontweight','bold');
 text(-10,-120,'c)','color','k','Fontsize',18,'fontweight','bold','HorizontalAlignment','center');
-yc_framebox(10,15,2,799,'r',2);
+das_framebox(10,15,2,799,'r',2);
 
 
 ax2=subplot(3,4,10);
-yc_imagesc(dmrr3,95,1,t,x);colormap(ax2,seis);
+das_imagesc(dmrr3,95,1,t,x);colormap(ax2,seis);
 title(strcat('Denoised (Cmax:'," ",num2str(max(abs(craw3(:)))),'->',num2str(max(abs(cmrr3(:)))),')'),'Fontsize',14,'fontweight','bold');
 xlabel('Time (s)','Fontsize',14,'fontweight','bold');
 % ylabel('Channel','Fontsize',14,'fontweight','bold');
 set(gca,'Linewidth',2,'Fontsize',10,'Fontweight','bold');
-yc_framebox(10,15,2,799,'r',2);
+das_framebox(10,15,2,799,'r',2);
 
 ax1=subplot(3,4,11);
-yc_imagesc(eq3,98,1,t,x);colormap(ax1,seis);
+das_imagesc(eq3,98,1,t,x);colormap(ax1,seis);
 title('Raw','Interpreter', 'none','Fontsize',10,'fontweight','bold');
 xlabel('Time (s)','Fontsize',14,'fontweight','bold');
 set(gca,'Linewidth',2,'Fontsize',10,'Fontweight','bold');
@@ -227,7 +227,7 @@ set(gca,'Linewidth',2,'Fontsize',10,'Fontweight','bold');
 xlim([10,15]);
 
 ax2=subplot(3,4,12);
-yc_imagesc(dmrr3,98,1,t,x);colormap(ax2,seis);
+das_imagesc(dmrr3,98,1,t,x);colormap(ax2,seis);
 title('Denoised','Fontsize',14,'fontweight','bold');
 xlabel('Time (s)','Fontsize',14,'fontweight','bold');
 set(gca,'Linewidth',2,'Fontsize',10,'Fontweight','bold');
