@@ -1,4 +1,4 @@
-% Script to plot Figure 4
+% Script to plot Figure 5
 % BY Yangkang Chen
 % Jan, 2023
 % This script takes about 30 minutes
