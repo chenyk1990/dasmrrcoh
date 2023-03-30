@@ -4,8 +4,8 @@
 % This script takes about 30 minutes
 %
 % Dependency MATdrr
-% svn co https://github.com/chenyk1990/MATdrr/trunk ./MATdrr
-% or git clone https://github.com/chenyk1990/MATdrr
+% svn co https://github.com/aaspip/MATdrr/trunk ./MATdrr
+% or git clone https://github.com/aaspip/MATdrr ./
 
 clc;clear;close all;
 addpath(genpath('./MATdrr'));

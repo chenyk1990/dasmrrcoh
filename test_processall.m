@@ -4,8 +4,8 @@
 % This script takes about 6 hours (for processing) and 10 minutes (for plotting only)
 %
 % Dependency MATdrr
-% svn co https://github.com/chenyk1990/MATdrr/trunk ./MATdrr
-% or git clone https://github.com/chenyk1990/MATdrr
+% svn co https://github.com/aaspip/MATdrr/trunk ./MATdrr
+% or git clone https://github.com/aaspip/MATdrr ./
 
 clc;clear;close all;
 addpath(genpath('./MATdrr'));

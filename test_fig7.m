@@ -1,140 +1,115 @@
 % Script to plot Figure 7
 % BY Yangkang Chen
-% Jan, 2023
+% March, 2023
 % This script takes about 10 minutes
 %
 % Dependency MATdrr
-% svn co https://github.com/chenyk1990/MATdrr/trunk ./MATdrr 
-% or git clone https://github.com/chenyk1990/MATdrr 
+% svn co https://github.com/aaspip/MATdrr/trunk ./MATdrr
+% or git clone https://github.com/aaspip/MATdrr ./
 
 clc;clear;close all;
 addpath(genpath('./MATdrr'));
 addpath(genpath('./'));
 
-names=dir('raw/*.mat');
 
-jj=7;
-for ii=7:7
-    name3=names(ii).name;
-    load(strcat(names(ii).folder,'/',names(ii).name));
-    eq1=data;
+ii=31;
+load(sprintf('processed/eq%d.mat',ii));
+d_ldrr=d_bpmfmrr;
+dtmp=d_ldrr';
+indx=1:400;
 
-    if ii==12
-        data(find(isnan(data)))=0;
-    end
-
-    if ii==13
-        data(:,7200:7221)=0;
-        data(:,7150:7271)=das_mf(data(:,7150:7271),40,1,2);
-        data(:,7150:7271)=das_meanf(data(:,7150:7271),40,1,2);
-    end
-
-    eq=data;
-    d_bp=das_bandpass(eq',1/250,0,20)';
-    d_bpmf=das_mf(d_bp,5,1,1);
-    %% MRR
-    n1win=512;n2win=200;n3win=1;
-    r1=0.5;r2=0.5;r3=0.5;
-    d_bpmfmrr=drr3d_win(d_bpmf',0,50,1/250,2,4,0,n1win,n2win,n3win,r1,r2,r3)';
-    d_bpmfmrr=single(d_bpmfmrr);
-    save('processed/eq7.mat','d_bpmfmrr');
-    fprintf('event %d/%d is done\n',ii,length(names));
-    %     close gcf;
-end
-
-
-
-t=[0:14999]*1/250;
-x=1:800;
-
-nt=14999;
-nx=length(x);
-
-v=linspace(-0.0013,0.0013,100);
-% v=linspace(-0.0002,0.0002,200);
-Param.v=v;
-Param.nt=nt;
-Param.h=[0:nx-1];
-Param.dt=1/250.0;
+Param.h=[0:length(indx)-1];
+Param.dt=1/250;dt=1/250;
 Param.type=1;
-Param.oper=-1;
+v=linspace(-0.0013,0.0013,100);
+% v=linspace(-0.0020,0.0020,200);
+Param.v=v;
+Param.nt=1000;
+t1=das_coh(dtmp(1:1000,indx),Param);
+t2=das_coh(dtmp([1:1000]+1000,indx),Param);
+t3=das_coh(dtmp([1:1000]+2000,indx),Param);
+t4=das_coh(dtmp([1:1000]+3000,indx),Param);
+t5=das_coh(dtmp([1:1000]+4000,indx),Param);
+t6=das_coh(dtmp([1:1000]+5000,indx),Param);
+t7=das_coh(dtmp([1:1000]+6000,indx),Param);
+t8=das_coh(dtmp([1:1000]+7000,indx),Param);
+t9=das_coh(dtmp([1:1000]+8000,indx),Param);
+t10=das_coh(dtmp([1:1000]+9000,indx),Param);
 
-c_raw=das_coh(eq',Param);
-% c_bp=das_coh(d_bp,Param);
-c_bpmf=das_coh(d_bpmf',Param);
-c_bpmfmrr=das_coh(d_bpmfmrr',Param);
 
-%% picking
-addpath(genpath('~/dasdenoising'));
-nsta=30;nlta=300;
-[ O,R ] = das_picker_stalta(d_bpmfmrr',nsta, nlta);
-[ O2,R ] = das_picker_stalta(d_bpmf',nsta, nlta);
+figure('units','normalized','Position',[0.2 0.4 0.7, 1],'color','w');
+ax=subplot(4,5,1);iw=0;
+das_imagesc2(dtmp([1:1000],indx),98,1,indx,[1:1000]+1000*iw);colormap(ax,seis);ylabel('Time sample','Fontsize',14,'fontweight','bold');
+title('Window 1');set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
+text(-150,-150,'a)','color','k','Fontsize',30,'fontweight','bold','HorizontalAlignment','center');
+
+ax=subplot(4,5,2);iw=1;
+das_imagesc2(dtmp([1:1000]+1000,indx),98,1,indx,[1:1000]+1000*iw);colormap(ax,seis);
+title('Window 2');set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
+ax=subplot(4,5,3);iw=2;
+das_imagesc2(dtmp([1:1000]+2000,indx),98,1,indx,[1:1000]+1000*iw);colormap(ax,seis);f1=das_ap2fp([100,2790]);f2=das_ap2fp([100,2600]);annotation('textarrow',[f2(1),f1(1)],[f2(2),f1(2)],'String','P','color','r','linewidth',2,'Fontsize',20,'fontweight','bold');f1=das_ap2fp([300,2900]);f2=das_ap2fp([300,2600]);annotation('textarrow',[f2(1),f1(1)],[f2(2),f1(2)],'String','S','color','r','linewidth',2,'Fontsize',20,'fontweight','bold');
+title('Window 3');set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
+ax=subplot(4,5,4);iw=3;
+das_imagesc2(dtmp([1:1000]+3000,indx),98,1,indx,[1:1000]+1000*iw);colormap(ax,seis);f1=das_ap2fp([100,3400]);f2=das_ap2fp([200,3600]);annotation('textarrow',[f2(1),f1(1)],[f2(2),f1(2)],'String','Signal','color','r','linewidth',2,'Fontsize',20,'fontweight','bold');
+title('Window 4');set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
+ax=subplot(4,5,5);iw=4;
+das_imagesc2(dtmp([1:1000]+4000,indx),98,1,indx,[1:1000]+1000*iw);colormap(ax,seis);f1=das_ap2fp([100,4200]);f2=das_ap2fp([200,4400]);annotation('textarrow',[f2(1),f1(1)],[f2(2),f1(2)],'String','Signal','color','r','linewidth',2,'Fontsize',20,'fontweight','bold');
+title('Window 5');set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
+ax=subplot(4,5,6);iw=5;
+das_imagesc2(dtmp([1:1000]+5000,indx),98,1,indx,[1:1000]+1000*iw);colormap(ax,seis);ylabel('Time sample','Fontsize',14,'fontweight','bold');
+title('Window 6');set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
+ax=subplot(4,5,7);iw=6;
+das_imagesc2(dtmp([1:1000]+6000,indx),98,1,indx,[1:1000]+1000*iw);colormap(ax,seis);
+title('Window 7');set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
+ax=subplot(4,5,8);iw=7;
+das_imagesc2(dtmp([1:1000]+7000,indx),98,1,indx,[1:1000]+1000*iw);colormap(ax,seis);
+title('Window 8');set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
+ax=subplot(4,5,9);iw=8;;
+das_imagesc2(dtmp([1:1000]+8000,indx),98,1,indx,[1:1000]+1000*iw);colormap(ax,seis);
+title('Window 9');set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
+ax=subplot(4,5,10);iw=9;
+das_imagesc2(dtmp([1:1000]+9000,indx),98,1,indx,[1:1000]+1000*iw);colormap(ax,seis);
+title('Window 10');set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
 
 
-figure('units','normalized','Position',[0.2 0.4 0.8, 1],'color','w');
-ax=subplot(3,2,1);
-das_imagesc(eq,95,1,t,x);colormap(ax,seis);xlim([0,60]);
-title(name3,'Interpreter', 'none','Fontsize',14,'fontweight','bold');
-% xlabel('Time (s)','Fontsize',14,'fontweight','bold');
-ylabel('Channel','Fontsize',14,'fontweight','bold');
-set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
-text(-5,-100,'a)','color','k','Fontsize',18,'fontweight','bold','HorizontalAlignment','center');
+% figure('units','normalized','Position',[0.2 0.4 1, 0.9],'color','w');
 
-ax=subplot(3,2,3);
-das_imagesc(d_bpmf,95,1,t,x);colormap(ax,seis);title('BP+MF');xlim([0,60]);
-title('BP+MF','Fontsize',14,'fontweight','bold');
-% xlabel('Time (s)','Fontsize',14,'fontweight','bold');
-ylabel('Channel','Fontsize',14,'fontweight','bold');
-set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
-text(-5,-100,'c)','color','k','Fontsize',18,'fontweight','bold','HorizontalAlignment','center');
-hold on;plot(O2/250,x,'o','color','g','linewidth',2);legend('STA/LTA','Location','Best');
+ax=subplot(4,5,11);iw=0;
+indv=1:100;
+das_imagesc2(t1,98,1,indv,[1:1000]+1000*iw);colormap(ax,jet);caxis([0,1]);
+title(strcat('Cmax=',num2str(max(abs(t1(:))))));set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');ylabel('Time sample','Fontsize',14,'fontweight','bold');
+text(-37,-150,'b)','color','k','Fontsize',30,'fontweight','bold','HorizontalAlignment','center');
 
-ax=subplot(3,2,5);
-das_imagesc(d_bpmfmrr,95,1,t,x);colormap(ax,seis);title('BP+MF');xlim([0,60]);
-title('BP+MF+MRR','Fontsize',14,'fontweight','bold');
-xlabel('Time (s)','Fontsize',14,'fontweight','bold');
-ylabel('Channel','Fontsize',14,'fontweight','bold');
-set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
-text(-5,-100,'e)','color','k','Fontsize',18,'fontweight','bold','HorizontalAlignment','center');
-hold on;
-% plot(t(3672)*ones(1,2),[max(x),min(x)],'--','color','k','linewidth',2)
-plot(O/250,x,'o','color','g','linewidth',2);
-plot(t(3672)+x*v(37),x,'--','color','r','linewidth',2);legend('STA/LTA','Coherency','Location','Best');
-
-ax2=subplot(3,2,2);
-imagesc(t,v,c_raw'*10);colormap(ax2,jet);caxis([0,0.5]);xlim([0,60]);
-title(strcat('Raw Cmax=',num2str(max(abs(c_raw(:))))),'Fontsize',14,'fontweight','bold');
-% xlabel('Time (s)','Fontsize',14,'fontweight','bold');
-ylabel('Slope','Fontsize',14,'fontweight','bold');
-set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
-text(-5,min(v)-(max(v)-min(v))/(max(x)-min(x))*100,'b)','color','k','Fontsize',18,'fontweight','bold','HorizontalAlignment','center');
-
-ax4=subplot(3,2,4);
-imagesc(t,v,c_bpmf');colormap(ax4,jet);caxis([0,0.5]);xlim([0,60]);
-title(strcat('BP+MF Cmax=',num2str(max(abs(c_bpmf(:))))),'Fontsize',14,'fontweight','bold');
-% xlabel('Time (s)','Fontsize',14,'fontweight','bold');
-ylabel('Slope','Fontsize',14,'fontweight','bold');
-set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
-text(-5,min(v)-(max(v)-min(v))/(max(x)-min(x))*100,'d)','color','k','Fontsize',18,'fontweight','bold','HorizontalAlignment','center');
-
-ax6=subplot(3,2,6);
-imagesc(t,v,c_bpmfmrr');colormap(ax6,jet);caxis([0,0.5]);xlim([0,60]);
-title(strcat('BP+MF+MRR Cmax=',num2str(max(abs(c_bpmfmrr(:))))),'Fontsize',14,'fontweight','bold');
-xlabel('Time (s)','Fontsize',14,'fontweight','bold');
-ylabel('Slope','Fontsize',14,'fontweight','bold');
-set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
-text(-5,min(v)-(max(v)-min(v))/(max(x)-min(x))*100,'f)','color','k','Fontsize',18,'fontweight','bold','HorizontalAlignment','center');
-hold on;plot(t(3672)*ones(1,2),[max(v),min(v)],'--','color','r','linewidth',2)
-plot([min(t),max(t)],v(40)*ones(1,2),'--','color','r','linewidth',2)
-plot(t(3672),v(40),'o','color','r','linewidth',2)
-text(t(3672)+4,v(40)-0.0002,'Cmax','color','r','Fontsize',18,'fontweight','bold','HorizontalAlignment','center');
+ax=subplot(4,5,12);iw=1;
+das_imagesc2(t2,98,1,indv,[1:1000]+1000*iw);colormap(ax,jet);caxis([0,1]);
+title(strcat('Cmax=',num2str(max(abs(t2(:))))));set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
+ax=subplot(4,5,13);iw=2;
+das_imagesc2(t3,98,1,indv,[1:1000]+1000*iw);colormap(ax,jet);caxis([0,1]);
+title(strcat('Cmax=',num2str(max(abs(t3(:))))),'color','r');set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
+ax=subplot(4,5,14);iw=3;
+das_imagesc2(t4,98,1,indv,[1:1000]+1000*iw);colormap(ax,jet);caxis([0,1]);
+title(strcat('Cmax=',num2str(max(abs(t4(:))))),'color','r');set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
+ax=subplot(4,5,15);iw=4;
+das_imagesc2(t5,98,1,indv,[1:1000]+1000*iw);colormap(ax,jet);caxis([0,1]);
+title(strcat('Cmax=',num2str(max(abs(t5(:))))),'color','r');set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
+ax=subplot(4,5,16);iw=5;
+das_imagesc2(t6,98,1,indv,[1:1000]+1000*iw);colormap(ax,jet);caxis([0,1]);
+title(strcat('Cmax=',num2str(max(abs(t6(:))))));set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');xlabel('Trace','Fontsize',14,'fontweight','bold');ylabel('Time sample','Fontsize',14,'fontweight','bold');
+ax=subplot(4,5,17);iw=6;
+das_imagesc2(t7,98,1,indv,[1:1000]+1000*iw);colormap(ax,jet);caxis([0,1]);
+title(strcat('Cmax=',num2str(max(abs(t7(:))))));set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');xlabel('Trace','Fontsize',14,'fontweight','bold');
+ax=subplot(4,5,18);iw=7;
+das_imagesc2(t8,98,1,indv,[1:1000]+1000*iw);colormap(ax,jet);caxis([0,1]);
+title(strcat('Cmax=',num2str(max(abs(t8(:))))));set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');xlabel('Trace','Fontsize',14,'fontweight','bold');
+ax=subplot(4,5,19);iw=8;
+das_imagesc2(t9,98,1,indv,[1:1000]+1000*iw);colormap(ax,jet);caxis([0,1]);
+title(strcat('Cmax=',num2str(max(abs(t9(:))))));set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');xlabel('Trace','Fontsize',14,'fontweight','bold');
+ax=subplot(4,5,20);iw=9;
+das_imagesc2(t10,98,1,indv,[1:1000]+1000*iw);colormap(ax,jet);caxis([0,1]);
+title(strcat('Cmax=',num2str(max(abs(t10(:))))));set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');xlabel('Trace','Fontsize',14,'fontweight','bold');
+cb=colorbar;
+set(cb,'Position',[0.92,0.25 0.01 0.1])
 
 print(gcf,'-depsc','-r300','fig7.eps');
-
-
-
-
-
-
 
 
