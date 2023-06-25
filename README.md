@@ -8,7 +8,7 @@
 ## Reference
 If you find this package useful, please do not forget to cite the following paper.
 
-    Chen, Y., Savvaidis, A., Chen, Y., Saad, O.M., and Fomel, S., (2023). Enhancing earthquake detection from distributed acoustic sensing data by coherency measure and moving-rank-reduction filtering, Geophysics, 127(6), doi:10.1190/geo2023.0020.1.
+    Chen, Y., Savvaidis, A., Chen, Y., Saad, O.M., and Fomel, S., (2023). Enhancing earthquake detection from distributed acoustic sensing data by coherency measure and moving-rank-reduction filtering, Geophysics, 88(6), WC13-WC23, doi:10.1190/geo2023.0020.1.
     
 BibTeX:
 	
@@ -17,9 +17,9 @@ BibTeX:
 	  title = {Enhancing earthquake detection from distributed acoustic sensing data by coherency measure and moving-rank-reduction filtering},
 	  journal={Geophysics},
 	  year=2023,
-	  volume=127,
+	  volume=88,
 	  issue=6,
-	  pages={in press},
+	  pages={WC13-WC23},
 	  doi={10.1190/geo2023.0020.1},
 	}
 
