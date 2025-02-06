@@ -121,6 +121,7 @@ title('BP+MF+MRR','Fontsize',14,'fontweight','bold');
 set(gca,'Linewidth',2,'Fontsize',14,'Fontweight','bold');
 text(-5,-100,'d)','color','k','Fontsize',18,'fontweight','bold','HorizontalAlignment','center');
 hold on;plot(t(3095)*ones(1,2),[max(x),min(x)],'--','color','r','linewidth',2);
+%% can also be calculated approximately as: [~,ind]=max(max(abs(d_bpmfmrr),[],2));
 
 ax5=subplot(4,2,5);
 imagesc(t,v,c0'*10);colormap(ax5,jet);caxis([0,0.5]);
