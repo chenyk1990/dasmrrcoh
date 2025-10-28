@@ -23,6 +23,8 @@ BibTeX:
 	  doi={10.1190/geo2023.0020.1},
 	}
 
+This paper and its induced works can be found at https://utexas.box.com/s/rlljet3knohbgk1zeitqyqkq61ddq1kf. 
+
 -----------
 ## Copyright
     Authors of the dasmrrcoh paper, 2021-present
